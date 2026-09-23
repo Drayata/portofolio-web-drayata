@@ -40,3 +40,11 @@ export type TimelineItem = {
   description: string;
   type: string;
 };
+
+export type MiniProject = {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl: string;
+  tags?: string[];
+};

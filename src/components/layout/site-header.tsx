@@ -56,17 +56,17 @@ export function SiteHeader() {
       {open ? (
         <div className="mobile-nav" id="mobile-navigation">
           <nav aria-label="Mobile navigation">
-            {navigation.map((item, index) => (
-              <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
-                <span className="nav-index">0{index + 1}</span>
-                {item.label}
-              </Link>
-            ))}
-            <Link href="/resume" onClick={() => setOpen(false)}>
-              <span className="nav-index">05</span>
-              Résumé
+          {navigation.map((item, index) => (
+            <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+              <span className="nav-index">0{index + 1}</span>
+              {item.label}
             </Link>
-          </nav>
+          ))}
+          <Link href="/resume" onClick={() => setOpen(false)}>
+            <span className="nav-index">0{navigation.length + 1}</span>
+            Résumé
+          </Link>
+        </nav>
         </div>
       ) : null}
     </header>

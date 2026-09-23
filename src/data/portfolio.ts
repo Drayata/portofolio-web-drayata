@@ -1,4 +1,4 @@
-import type { Project, SocialLink, TimelineItem } from "@/types/portfolio";
+import type { MiniProject, Project, SocialLink, TimelineItem } from "@/types/portfolio";
 
 // TODO: replace before launch — email, usernames, timezone, and canonical domain.
 export const profile = {
@@ -27,6 +27,7 @@ export const socialLinks: SocialLink[] = [
 
 export const navigation = [
   { label: "Work", href: "/#work" },
+  { label: "Mini Projects", href: "/#mini-projects" },
   { label: "About", href: "/#about" },
   { label: "Skills", href: "/#skills" },
   { label: "Contact", href: "/#contact" },
@@ -250,6 +251,16 @@ export const projects: Project[] = [
       { title: "Focus session", caption: "A distraction-light timer state with a single primary action.", variant: "timer" },
       { title: "Habit builder", caption: "A concise setup flow for schedule and completion preferences.", variant: "habit" },
     ],
+  },
+];
+
+export const miniProjects: MiniProject[] = [
+  {
+    id: "mini-project-template",
+    title: "Mini Project Title",
+    description: "A short description of what this project does and why it was built.",
+    imageUrl: "/mini-project-placeholder.svg",
+    tags: ["Technology", "Tool"],
   },
 ];
 

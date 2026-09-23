@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" role="img" aria-labelledby="title description">
+  <title id="title">Mini project placeholder</title>
+  <desc id="description">Abstract interface placeholder ready to be replaced with a project screenshot</desc>
+  <rect width="1200" height="675" fill="#090d12"/>
+  <path d="M0 112.5h1200M0 225h1200M0 337.5h1200M0 450h1200M0 562.5h1200M200 0v675M400 0v675M600 0v675M800 0v675M1000 0v675" stroke="#fff" stroke-opacity=".04"/>
+  <rect x="185" y="118" width="830" height="439" rx="18" fill="#111821" stroke="#5ce1e6" stroke-opacity=".35"/>
+  <circle cx="225" cy="157" r="7" fill="#5ce1e6"/>
+  <circle cx="250" cy="157" r="7" fill="#5ce1e6" fill-opacity=".45"/>
+  <circle cx="275" cy="157" r="7" fill="#5ce1e6" fill-opacity=".2"/>
+  <rect x="225" y="205" width="360" height="25" rx="8" fill="#f4f7fb" fill-opacity=".75"/>
+  <rect x="225" y="250" width="590" height="12" rx="6" fill="#f4f7fb" fill-opacity=".18"/>
+  <rect x="225" y="279" width="470" height="12" rx="6" fill="#f4f7fb" fill-opacity=".1"/>
+  <rect x="225" y="337" width="230" height="155" rx="12" fill="#5ce1e6" fill-opacity=".12"/>
+  <rect x="485" y="337" width="230" height="155" rx="12" fill="#8b5cf6" fill-opacity=".12"/>
+  <rect x="745" y="337" width="230" height="155" rx="12" fill="#f0bb64" fill-opacity=".12"/>
+</svg>
