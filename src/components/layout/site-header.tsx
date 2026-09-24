@@ -45,10 +45,15 @@ export function SiteHeader() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
     };
+    const onResize = () => {
+      if (window.innerWidth >= 768) setOpen(false);
+    };
     window.addEventListener("keydown", onKeyDown);
+    window.addEventListener("resize", onResize);
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
+      window.removeEventListener("resize", onResize);
     };
   }, [open]);
 
@@ -85,8 +90,8 @@ export function SiteHeader() {
         </button>
       </nav>
       {open ? (
-        <div className="mobile-nav" id="mobile-navigation">
-          <nav aria-label="Mobile navigation">
+        <div className="mobile-nav" id="mobile-navigation" onClick={() => setOpen(false)}>
+          <nav aria-label="Mobile navigation" onClick={(event) => event.stopPropagation()}>
             {navigation.map((item, index) => (
               <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
                 <span className="nav-index">0{index + 1}</span>
