@@ -1,4 +1,9 @@
-import type { MiniProject, Project, SocialLink, TimelineItem } from "@/types/portfolio";
+import type {
+  MiniProject,
+  Project,
+  SocialLink,
+  TimelineItem,
+} from "@/types/portfolio";
 
 // TODO: replace before launch — email, usernames, timezone, and canonical domain.
 export const profile = {
@@ -10,10 +15,10 @@ export const profile = {
   timezone: "Western Indonesia Time (UTC+7)",
   availability: "Open to internship and junior web development opportunities",
   eyebrow: "Web Developer · Indonesia",
-  headline: "I build thoughtful digital experiences for the modern web.",
+  headline: "Indra Surya Adinata",
   description:
     "I turn ideas into responsive, accessible, and reliable web products—with equal attention to interface details and the engineering behind them.",
-  email: "indra.portfolio@example.com",
+  email: "indra.suryaadinata@gmail.com",
   about:
     "I’m an Informatics Engineering student at Universitas Jenderal Soedirman who enjoys turning open-ended problems into clear, structured products. I learn best by building: mapping a user flow, shaping the interface, then working through the data and implementation details that make it dependable. My projects span modern web applications, relational database design, and an early-stage mobile productivity concept. I care about thoughtful UI, accessible interactions, and code that remains understandable as a product grows. I’m currently looking for an internship or junior web development opportunity where I can contribute, learn from a strong team, and keep improving through real product work.",
   education: "Informatics Engineering — Universitas Jenderal Soedirman",
@@ -21,8 +26,11 @@ export const profile = {
 } as const;
 
 export const socialLinks: SocialLink[] = [
-  { label: "GitHub", href: "https://github.com/USERNAME" },
+  { label: "GitHub", href: "https://github.com/drayata" },
   { label: "LinkedIn", href: "https://www.linkedin.com/in/USERNAME" },
+  { label: "WhatsApp", href: "https://wa.me/6285196089207" },
+  { label: "Telegram", href: "https://www.linkedin.com/in/USERNAME" },
+  { label: "Instagram", href: "https:" },
 ];
 
 export const navigation = [
@@ -107,9 +115,23 @@ export const projects: Project[] = [
     outcome:
       "The project currently provides the core role-based marketplace flows and a working Supabase-backed foundation. It remains in development; usability refinement and broader end-to-end validation are the next priorities.",
     gallery: [
-      { title: "Service discovery", caption: "Catalogue composition prioritizing service type, creator, and price context.", variant: "catalogue" },
-      { title: "Role workspace", caption: "A focused dashboard concept that changes emphasis for each user role.", variant: "dashboard" },
-      { title: "Checkout flow", caption: "A deliberately linear review flow with visible order state.", variant: "checkout" },
+      {
+        title: "Service discovery",
+        caption:
+          "Catalogue composition prioritizing service type, creator, and price context.",
+        variant: "catalogue",
+      },
+      {
+        title: "Role workspace",
+        caption:
+          "A focused dashboard concept that changes emphasis for each user role.",
+        variant: "dashboard",
+      },
+      {
+        title: "Checkout flow",
+        caption: "A deliberately linear review flow with visible order state.",
+        variant: "checkout",
+      },
     ],
   },
   {
@@ -177,9 +199,24 @@ export const projects: Project[] = [
     outcome:
       "The resulting schema supports the planned booking relationships, common queries, and integrity checks. The outcome is an academic database implementation, not a deployed consumer ticketing service.",
     gallery: [
-      { title: "Entity map", caption: "A visual abstraction of the route, schedule, booking, and passenger relationships.", variant: "schema" },
-      { title: "Query surface", caption: "A compact representation of joined operational data exposed through a view.", variant: "query" },
-      { title: "Integrity checks", caption: "Constraint tests covering valid creation and rejected relationships.", variant: "integrity" },
+      {
+        title: "Entity map",
+        caption:
+          "A visual abstraction of the route, schedule, booking, and passenger relationships.",
+        variant: "schema",
+      },
+      {
+        title: "Query surface",
+        caption:
+          "A compact representation of joined operational data exposed through a view.",
+        variant: "query",
+      },
+      {
+        title: "Integrity checks",
+        caption:
+          "Constraint tests covering valid creation and rejected relationships.",
+        variant: "integrity",
+      },
     ],
   },
   {
@@ -247,9 +284,24 @@ export const projects: Project[] = [
     outcome:
       "The project has a defined MVP, feature architecture, and early interface direction. It remains a concept in progress, with implementation and user feedback still needed before its assumptions can be validated.",
     gallery: [
-      { title: "Today view", caption: "A calm overview connecting habits, the next focus session, and quick capture.", variant: "today" },
-      { title: "Focus session", caption: "A distraction-light timer state with a single primary action.", variant: "timer" },
-      { title: "Habit builder", caption: "A concise setup flow for schedule and completion preferences.", variant: "habit" },
+      {
+        title: "Today view",
+        caption:
+          "A calm overview connecting habits, the next focus session, and quick capture.",
+        variant: "today",
+      },
+      {
+        title: "Focus session",
+        caption:
+          "A distraction-light timer state with a single primary action.",
+        variant: "timer",
+      },
+      {
+        title: "Habit builder",
+        caption:
+          "A concise setup flow for schedule and completion preferences.",
+        variant: "habit",
+      },
     ],
   },
 ];
@@ -258,15 +310,38 @@ export const miniProjects: MiniProject[] = [
   {
     id: "mini-project-template",
     title: "Mini Project Title",
-    description: "A short description of what this project does and why it was built.",
+    description:
+      "A short description of what this project does and why it was built.",
     imageUrl: "/mini-project-placeholder.svg",
     tags: ["Technology", "Tool"],
   },
 ];
 
 export const skills = [
-  { category: "Frontend", items: ["HTML", "CSS", "JavaScript", "TypeScript", "React", "Next.js", "Tailwind CSS"] },
-  { category: "Backend & Data", items: ["Supabase", "SQL", "Oracle Database"] },
+  {
+    category: "Frontend",
+    items: [
+      "HTML",
+      "CSS",
+      "JavaScript",
+      "TypeScript",
+      "React",
+      "Next.js",
+      "Tailwind CSS",
+    ],
+  },
+  {
+    category: "Backend & Data",
+    items: [
+      "Supabase",
+      "SQL",
+      "Oracle Database",
+      "MySQL",
+      "PostgreeSQL",
+      "Node.js",
+      "Express",
+    ],
+  },
   { category: "Tools", items: ["Git", "GitHub", "Figma"] },
   { category: "Exploring", items: ["Flutter", "Applied AI"] },
 ] as const;
@@ -276,19 +351,22 @@ export const timeline: TimelineItem[] = [
   {
     period: "Present",
     title: "Informatics Engineering",
-    description: "Studying at Universitas Jenderal Soedirman and building a foundation across software, data, and product thinking.",
+    description:
+      "Studying at Universitas Jenderal Soedirman and building a foundation across software, data, and product thinking.",
     type: "Education",
   },
   {
     period: "Selected work",
     title: "Academic product projects",
-    description: "Applying coursework through a full-stack marketplace, a relational ticketing database, and a mobile product concept.",
+    description:
+      "Applying coursework through a full-stack marketplace, a relational ticketing database, and a mobile product concept.",
     type: "Practice",
   },
   {
     period: "Current focus",
     title: "From implementation to product engineering",
-    description: "Deepening full-stack patterns, accessible frontend craft, and practical uses of applied AI.",
+    description:
+      "Deepening full-stack patterns, accessible frontend craft, and practical uses of applied AI.",
     type: "Learning",
   },
 ];

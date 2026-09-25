@@ -1,6 +1,7 @@
-import { ArrowDown, ArrowRight, FileText } from "lucide-react";
+import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { profile } from "@/data/portfolio";
+import Image from "next/image";
 
 export function Hero() {
   return (
@@ -8,8 +9,7 @@ export function Hero() {
       <div className="hero-copy">
         <p className="eyebrow hero-eyebrow">{profile.eyebrow}</p>
         <h1 id="hero-title">
-          I build <span>thoughtful digital experiences</span> for the modern
-          web.
+          <span>Indra</span> Surya Adinata
         </h1>
         <p className="hero-description">{profile.description}</p>
         <div className="hero-actions">
@@ -18,9 +18,6 @@ export function Hero() {
           </Link>
           <Link href="/#contact" className="button button-secondary">
             Contact me <ArrowRight size={17} aria-hidden="true" />
-          </Link>
-          <Link href="/resume" className="button button-quiet">
-            View résumé <FileText size={17} aria-hidden="true" />
           </Link>
         </div>
       </div>
@@ -31,10 +28,14 @@ export function Hero() {
         <div className="orbit orbit-two">
           <i />
         </div>
-        <div className="orbit orbit-three" />
         <div className="core-mark">
-          <span>ISA</span>
-          <small>WEB / 01</small>
+          <Image
+            className="hero-image"
+            src="/images.jpeg"
+            alt=""
+            fill
+            sizes="(max-width: 768px) 32vw, 154px"
+          />
         </div>
         <div className="node node-a" />
         <div className="node node-b" />
