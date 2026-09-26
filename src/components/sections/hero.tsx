@@ -45,7 +45,6 @@ export function Hero() {
         <span className="art-label label-c">01.3079° S</span>
       </div>
       <a href="#profile-strip" className="scroll-cue">
-        <span>Scroll to explore</span>
         <ArrowDown size={15} aria-hidden="true" />
       </a>
     </section>
