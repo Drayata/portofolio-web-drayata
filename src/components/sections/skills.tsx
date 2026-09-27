@@ -1,8 +1,9 @@
-import { skills } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-export function Skills() {
+export async function Skills() {
+  const skills = await getContent("skills");
   return (
     <section id="skills" className="section skills-section" aria-labelledby="skills-heading">
       <div className="container">

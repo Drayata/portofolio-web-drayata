@@ -52,4 +52,21 @@ Project detail routes are statically generated from the `projects` array. Unknow
 3. Push the repository to your Git provider and import it into Vercel, or deploy to any platform that supports Next.js Node deployments.
 4. Set the production domain in `seo.url`, rebuild, and verify `/sitemap.xml`, `/robots.txt`, and social previews.
 
-No environment variables or backend services are required for the portfolio itself.
+## Local CMS with MySQL
+
+1. Copy `.env.example` to `.env.local` and set the MySQL URL, admin email, and a random `AUTH_SECRET` of at least 32 characters.
+2. Create the database and content table:
+
+```bash
+mysql -u root -p < database/schema.sql
+```
+
+3. Generate the admin password hash using the same `AUTH_SECRET`:
+
+```bash
+npm run auth:hash -- "your-password" "your-auth-secret"
+```
+
+4. Put the output in `ADMIN_PASSWORD_HASH`, run `npm run dev`, then open [http://localhost:3000/admin](http://localhost:3000/admin).
+
+CMS content is stored as JSON documents in MySQL. Until a section is saved in CMS, the site uses its existing value from `src/data/portfolio.ts`. Keep `.env.local` private; only `.env.example` belongs in Git.

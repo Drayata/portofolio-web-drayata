@@ -1,9 +1,10 @@
 import { ArrowUpRight, Mail } from "lucide-react";
-import { profile, socialLinks } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import { CopyEmail } from "@/components/ui/copy-email";
 import { Reveal } from "@/components/ui/reveal";
 
-export function Contact() {
+export async function Contact() {
+  const [profile, socialLinks] = await Promise.all([getContent("profile"), getContent("socialLinks")]);
   return (
     <section id="contact" className="section contact-section container" aria-labelledby="contact-heading">
       <Reveal>

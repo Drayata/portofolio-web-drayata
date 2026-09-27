@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { miniProjects } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-export function MiniProjects() {
+export async function MiniProjects() {
+  const miniProjects = await getContent("miniProjects");
   return (
     <section id="mini-projects" className="section container" aria-labelledby="mini-projects-heading">
       <Reveal>

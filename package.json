@@ -9,10 +9,12 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "playwright test",
-    "test:smoke": "playwright test --project=chromium"
+    "test:smoke": "playwright test --project=chromium",
+    "auth:hash": "node scripts/hash-password.mjs"
   },
   "dependencies": {
     "lucide-react": "^1.47.0",
+    "mysql2": "^3.24.4",
     "next": "^16.3.5",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"

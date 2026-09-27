@@ -1,9 +1,10 @@
-import { projects } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import { ProjectCard } from "@/components/projects/project-card";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-export function Work() {
+export async function Work() {
+  const projects = await getContent("projects");
   return (
     <section id="work" className="section container" aria-labelledby="work-heading">
       <Reveal>

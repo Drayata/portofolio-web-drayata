@@ -1,9 +1,10 @@
 import { ArrowDown, ArrowRight } from "lucide-react";
 import Link from "next/link";
-import { profile } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import Image from "next/image";
 
-export function Hero() {
+export async function Hero() {
+  const profile = await getContent("profile");
   return (
     <section className="hero container" aria-labelledby="hero-title">
       <div className="hero-copy">

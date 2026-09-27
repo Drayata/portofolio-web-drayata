@@ -3,17 +3,19 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, GitBranch } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectVisual } from "@/components/projects/project-visual";
-import { getProject, profile, projects, seo } from "@/data/portfolio";
+import { projects as defaultProjects } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 
 type ProjectPageProps = { params: Promise<{ slug: string }> };
 
 export function generateStaticParams() {
-  return projects.map(({ slug }) => ({ slug }));
+  return defaultProjects.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
   const { slug } = await params;
-  const project = getProject(slug);
+  const projects = await getContent("projects");
+  const project = projects.find((item) => item.slug === slug);
   if (!project) return {};
   const title = `${project.title} — Case Study`;
   return {
@@ -27,7 +29,12 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { slug } = await params;
-  const project = getProject(slug);
+  const [projects, profile, seo] = await Promise.all([
+    getContent("projects"),
+    getContent("profile"),
+    getContent("seo"),
+  ]);
+  const project = projects.find((item) => item.slug === slug);
   if (!project) notFound();
   const index = projects.findIndex((item) => item.slug === project.slug);
   const nextProject = projects[(index + 1) % projects.length];

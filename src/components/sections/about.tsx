@@ -1,9 +1,10 @@
 import { ArrowUpRight, MapPin } from "lucide-react";
-import { profile } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-export function About() {
+export async function About() {
+  const profile = await getContent("profile");
   return (
     <section id="about" className="section about-section container" aria-labelledby="about-heading">
       <Reveal>

@@ -1,8 +1,9 @@
-import { timeline } from "@/data/portfolio";
+import { getContent } from "@/lib/content";
 import { Reveal } from "@/components/ui/reveal";
 import { SectionHeading } from "@/components/ui/section-heading";
 
-export function Timeline() {
+export async function Timeline() {
+  const timeline = await getContent("timeline");
   return (
     <section className="section container timeline-section" aria-labelledby="timeline-heading">
       <Reveal><SectionHeading id="timeline-heading" eyebrow="04 / Learning path" title="Building depth through practice." /></Reveal>

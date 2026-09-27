@@ -2692,6 +2692,20 @@ button {
   }
 }
 
+.admin-shell { min-height: 100vh; padding: 8rem 1rem 3rem; background: var(--background); }
+.admin-panel { width: min(1100px, 100%); margin: auto; padding: 2rem; border: 1px solid var(--border); border-radius: 1.5rem; background: var(--surface); }
+.admin-login { width: min(440px, 100%); display: grid; gap: 1.25rem; }
+.admin-login label, .admin-editor { display: grid; gap: .5rem; }
+.admin-login input { width: 100%; padding: .8rem; border: 1px solid var(--border); border-radius: .6rem; background: var(--background); color: inherit; }
+.admin-header { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.admin-tabs { display: flex; gap: .5rem; overflow-x: auto; margin: 2rem 0 1rem; }
+.admin-tabs a { padding: .55rem .8rem; border: 1px solid var(--border); border-radius: .5rem; }
+.admin-tabs a[aria-current="page"] { border-color: var(--foreground); }
+.admin-editor textarea { min-height: 60vh; resize: vertical; padding: 1rem; border: 1px solid var(--border); border-radius: .6rem; background: #0d1117; color: #e6edf3; font: .85rem/1.5 var(--font-geist-mono), monospace; tab-size: 2; }
+.admin-editor .button { justify-self: start; }
+.admin-success { color: #4ade80; }
+.admin-error, .admin-login [role="alert"] { color: #f87171; }
+
 @media print {
   @page {
     size: auto;
