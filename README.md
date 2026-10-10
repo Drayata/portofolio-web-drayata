@@ -52,21 +52,12 @@ Project detail routes are statically generated from the `projects` array. Unknow
 3. Push the repository to your Git provider and import it into Vercel, or deploy to any platform that supports Next.js Node deployments.
 4. Set the production domain in `seo.url`, rebuild, and verify `/sitemap.xml`, `/robots.txt`, and social previews.
 
-## Local CMS with MySQL
+## CMS with InsForge
 
-1. Copy `.env.example` to `.env.local` and set the MySQL URL, admin email, and a random `AUTH_SECRET` of at least 32 characters.
-2. Create the database and content table:
+1. Create an InsForge project and enable email/password authentication.
+2. Create the admin user in InsForge Auth and copy its user ID.
+3. Replace `00000000-0000-0000-0000-000000000000` in [`database/schema.sql`](database/schema.sql) with that user ID, then run the SQL in the InsForge SQL editor.
+4. Copy `.env.example` to `.env.local`, then set the project base URL, anonymous key from **Install → API Keys**, and the same admin user ID.
+5. Run `npm run dev`, then open [http://localhost:3000/admin](http://localhost:3000/admin).
 
-```bash
-mysql -u root -p < database/schema.sql
-```
-
-3. Generate the admin password hash using the same `AUTH_SECRET`:
-
-```bash
-npm run auth:hash -- "your-password" "your-auth-secret"
-```
-
-4. Put the output in `ADMIN_PASSWORD_HASH`, run `npm run dev`, then open [http://localhost:3000/admin](http://localhost:3000/admin).
-
-CMS content is stored as JSON documents in MySQL. Until a section is saved in CMS, the site uses its existing value from `src/data/portfolio.ts`. Keep `.env.local` private; only `.env.example` belongs in Git.
+CMS content is stored as JSON documents in InsForge PostgreSQL. Until a section is saved in CMS, the site uses its existing value from `src/data/portfolio.ts`. Set the same environment variables in production hosting. Keep `.env.local` private; only `.env.example` belongs in Git.

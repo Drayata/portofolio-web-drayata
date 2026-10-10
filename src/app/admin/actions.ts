@@ -1,14 +1,14 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createSession, destroySession, isAdmin, validCredentials } from "@/lib/auth";
+import { destroySession, isAdmin, signIn } from "@/lib/auth";
 import { defaultContent, saveContent, type ContentKey } from "@/lib/content";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "");
   const password = String(formData.get("password") ?? "");
-  if (!validCredentials(email, password)) redirect("/admin?error=invalid");
-  await createSession();
+  const { error } = await signIn(email, password);
+  if (error) redirect("/admin?error=invalid");
   redirect("/admin");
 }
 

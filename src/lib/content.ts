@@ -1,6 +1,5 @@
 import "server-only";
-import type { RowDataPacket } from "mysql2";
-import { db } from "@/lib/db";
+import { createInsforgeServerClient, createPublicInsforgeClient } from "@/lib/insforge";
 import {
   miniProjects as defaultMiniProjects,
   profile as defaultProfile,
@@ -22,16 +21,18 @@ export const defaultContent = {
 };
 
 export type ContentKey = keyof typeof defaultContent;
+type ContentRow = { content_key: ContentKey; value: unknown };
 
 export async function getContent<K extends ContentKey>(key: K): Promise<(typeof defaultContent)[K]> {
-  if (!process.env.DATABASE_URL) return defaultContent[key];
+  if (!process.env.INSFORGE_BASE_URL || !process.env.INSFORGE_ANON_KEY) return defaultContent[key];
   try {
-    const [rows] = await db.query<(RowDataPacket & { value: string | object })[]>(
-      "SELECT value FROM content WHERE content_key = ? LIMIT 1",
-      [key],
-    );
-    if (!rows[0]) return defaultContent[key];
-    return (typeof rows[0].value === "string" ? JSON.parse(rows[0].value) : rows[0].value) as (typeof defaultContent)[K];
+    const { data, error } = await createPublicInsforgeClient().database
+      .from("content")
+      .select("content_key,value")
+      .eq("content_key", key)
+      .maybeSingle();
+    if (error) throw error;
+    return (data as ContentRow | null)?.value as (typeof defaultContent)[K] ?? defaultContent[key];
   } catch (error) {
     console.error(`Failed to load content: ${key}`, error);
     return defaultContent[key];
@@ -46,8 +47,16 @@ export async function getAllContent() {
 }
 
 export async function saveContent(key: ContentKey, value: unknown) {
-  await db.execute(
-    "INSERT INTO content (content_key, value) VALUES (?, ?) ON DUPLICATE KEY UPDATE value = VALUES(value)",
-    [key, JSON.stringify(value)],
-  );
+  const client = await createInsforgeServerClient();
+  const { data, error } = await client.database
+    .from("content")
+    .select("content_key")
+    .eq("content_key", key)
+    .maybeSingle();
+  if (error) throw error;
+
+  const result = data
+    ? await client.database.from("content").update({ value }).eq("content_key", key)
+    : await client.database.from("content").insert({ content_key: key, value });
+  if (result.error) throw result.error;
 }
