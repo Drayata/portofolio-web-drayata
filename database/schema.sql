@@ -15,16 +15,13 @@ CREATE POLICY "public can read portfolio content" ON public.content
 DROP POLICY IF EXISTS "admin can insert portfolio content" ON public.content;
 CREATE POLICY "admin can insert portfolio content" ON public.content
   FOR INSERT TO authenticated
-  WITH CHECK ((SELECT auth.uid()) = '8394c7fc-b47a-4045-aeac-5be0dd964039
-'::uuid);
+  WITH CHECK ((SELECT auth.uid()) = 'b1ffe08c-919f-41e5-859c-c576b1bb45af'::uuid);
 
 DROP POLICY IF EXISTS "admin can update portfolio content" ON public.content;
 CREATE POLICY "admin can update portfolio content" ON public.content
   FOR UPDATE TO authenticated
-  USING ((SELECT auth.uid()) = '8394c7fc-b47a-4045-aeac-5be0dd964039
-'::uuid)
-  WITH CHECK ((SELECT auth.uid()) = '8394c7fc-b47a-4045-aeac-5be0dd964039
-'::uuid);
+  USING ((SELECT auth.uid()) = 'b1ffe08c-919f-41e5-859c-c576b1bb45af'::uuid)
+  WITH CHECK ((SELECT auth.uid()) = 'b1ffe08c-919f-41e5-859c-c576b1bb45af'::uuid);
 
 GRANT USAGE ON SCHEMA public TO anon, authenticated;
 GRANT SELECT ON public.content TO anon, authenticated;

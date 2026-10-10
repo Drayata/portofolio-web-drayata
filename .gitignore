@@ -11,6 +11,7 @@ test-results/
 *.log
 *.tsbuildinfo
 .DS_Store
+.env.local
 
 # InsForge & AI agent skills
 .insforge
