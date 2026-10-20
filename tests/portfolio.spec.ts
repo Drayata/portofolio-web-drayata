@@ -9,11 +9,11 @@ const projectRoutes = [
 test("homepage exposes recruiter-critical content and working copy action", async ({ page, context }) => {
   await context.grantPermissions(["clipboard-read", "clipboard-write"]);
   await page.goto("/");
-  await expect(page.getByRole("heading", { level: 1 })).toContainText("thoughtful digital experiences");
+  await expect(page.getByRole("heading", { level: 1 })).toContainText("Indra Surya Adinata");
   await expect(page.locator("#work article")).toHaveCount(3);
   await expect(page.getByRole("link", { name: /View case study/i })).toHaveCount(3);
   await expect(page.getByRole("link", { name: /Live project/i })).toHaveCount(0);
-  await page.getByRole("button", { name: /Copy indra.portfolio/i }).click();
+  await page.getByRole("button", { name: /^Copy /i }).click();
   await expect(page.getByText("Email address copied to clipboard.")).toBeAttached();
 });
 

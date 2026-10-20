@@ -1,8 +1,9 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { destroySession, isAdmin, signIn } from "@/lib/auth";
-import { defaultContent, saveContent, type ContentKey } from "@/lib/content";
+import { defaultContent, saveContent, validateContent, type ContentKey } from "@/lib/content";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") ?? "");
@@ -27,6 +28,13 @@ export async function updateContent(formData: FormData) {
   } catch {
     redirect(`/admin?section=${key}&error=json`);
   }
-  await saveContent(key, value);
+  try {
+    validateContent(key, value);
+    await saveContent(key, value);
+  } catch (error) {
+    console.error(`Failed to save content: ${key}`, error);
+    redirect(`/admin?section=${key}&error=save`);
+  }
+  revalidatePath("/", "layout");
   redirect(`/admin?section=${key}&saved=1`);
 }

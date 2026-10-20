@@ -1,227 +1,55 @@
 "use client";
 
-import { useState } from "react";
-import { ArrowLeft, ChevronDown, ChevronUp, Plus, Save, Trash2 } from "lucide-react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ArrowLeft, Check, ChevronDown, ChevronUp, Grid2X2, List, Pencil, Plus, Save, Search, Trash2, X } from "lucide-react";
+import { useFormStatus } from "react-dom";
 import { ProjectVisual } from "@/components/projects/project-visual";
 import type { ContentKey } from "@/lib/content";
 
 export type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+type Props = { contentKey: ContentKey; initialValue: JsonValue; action: (formData: FormData) => void | Promise<void>; create?: boolean };
+type ObjectValue = { [key: string]: JsonValue };
 
-type Props = {
-  contentKey: ContentKey;
-  initialValue: JsonValue;
-  action: (formData: FormData) => void | Promise<void>;
-};
+const labels: Record<string, string> = { profile:"Profil",seo:"SEO & metadata",socialLinks:"Tautan sosial",projects:"Proyek",miniProjects:"Proyek mini",skills:"Keahlian",timeline:"Perjalanan",href:"URL",imageUrl:"URL gambar",liveUrl:"URL live",sourceUrl:"URL source",supportingRole:"Peran pendukung",shortTitle:"Judul pendek",stack:"Teknologi",tags:"Teknologi",responsibilities:"Tanggung jawab",constraints:"Batasan",approach:"Pendekatan",decisions:"Keputusan",reflection:"Refleksi",outcome:"Hasil",gallery:"Galeri",exploring:"Sedang dipelajari" };
+const descriptions: Record<ContentKey,string> = { profile:"Atur identitas, profil publik, dan kontak.",projects:"Kelola studi kasus, urutan tampil, teknologi, dan tautan.",miniProjects:"Kelola karya ringkas, gambar, dan teknologi.",skills:"Kelola kategori dan keahlian secara langsung.",timeline:"Atur perjalanan pendidikan, praktik, dan pembelajaran.",socialLinks:"Kelola platform dan URL sosial.",seo:"Atur metadata dasar dan pratinjau hasil pencarian." };
+const wideFields = new Set(["description","about","summary","context","objective","body","reflection","outcome","caption"]);
+const tagFields = new Set(["stack","tags","features","responsibilities","constraints","exploring"]);
+const profileGroups = [
+  ["Identitas dasar",["name","monogram","role","supportingRole"]],
+  ["Konten hero",["eyebrow","headline","description","availability"]],
+  ["Tentang",["about","education","exploring"]],
+  ["Kontak & lokasi",["email","location","timezone"]],
+] as const;
 
-const labels: Record<string, string> = {
-  profile: "Profil utama",
-  seo: "SEO & metadata",
-  socialLinks: "Tautan sosial",
-  projects: "Proyek utama",
-  miniProjects: "Proyek mini",
-  skills: "Keahlian",
-  timeline: "Perjalanan",
-  href: "URL",
-  imageUrl: "URL gambar",
-  liveUrl: "URL live",
-  sourceUrl: "URL source",
-  supportingRole: "Peran pendukung",
-  shortTitle: "Judul pendek",
-};
+function labelFor(key:string){return labels[key]??key.replace(/([A-Z])/g," $1").replace(/^./,letter=>letter.toUpperCase());}
+function emptyLike(value:JsonValue):JsonValue{if(Array.isArray(value))return[];if(value&&typeof value==="object")return Object.fromEntries(Object.entries(value).map(([key,child])=>[key,emptyLike(child)]));if(typeof value==="boolean")return false;if(typeof value==="number")return 0;return "";}
+function moveItem<T>(value:T[],index:number,offset:number){const target=index+offset;if(target<0||target>=value.length)return value;const next=[...value];[next[index],next[target]]=[next[target],next[index]];return next;}
+function fieldType(key:string,value:string){if(key==="email")return"email";if(/url|href/i.test(key))return"url";return value.length>100||wideFields.has(key)?"textarea":"text";}
 
-function labelFor(key: string) {
-  return labels[key] ?? key.replace(/([A-Z])/g, " $1").replace(/^./, (letter) => letter.toUpperCase());
+function ConfirmDialog({title,children,onCancel,onConfirm}:{title:string;children:ReactNode;onCancel:()=>void;onConfirm:()=>void}){const cancelRef=useRef<HTMLButtonElement>(null);useEffect(()=>cancelRef.current?.focus(),[]);return <div className="admin-dialog-backdrop" role="presentation" onMouseDown={onCancel}><div className="admin-dialog" role="alertdialog" aria-modal="true" aria-labelledby="delete-title" onMouseDown={e=>e.stopPropagation()}><Trash2 size={19}/><h2 id="delete-title">{title}</h2><p>{children}</p><div><button ref={cancelRef} type="button" className="button button-secondary" onClick={onCancel}>Batal</button><button type="button" className="button admin-danger-button" onClick={onConfirm}>Hapus</button></div></div></div>}
+
+function TagList({name,value,onChange}:{name:string;value:string[];onChange:(v:JsonValue)=>void}){const [draft,setDraft]=useState("");const add=()=>{const item=draft.trim();if(!item||value.some(v=>v.toLowerCase()===item.toLowerCase()))return;onChange([...value,item]);setDraft("");};return <div className="admin-tag-field"><span>{labelFor(name)}</span><div className="admin-tags">{value.map((item,index)=><span key={`${item}-${index}`}>{item}<button type="button" aria-label={`Hapus ${item}`} onClick={()=>onChange(value.filter((_,i)=>i!==index))}><X size={12}/></button></span>)}</div><div className="admin-inline-add"><input aria-label={`Tambah ${labelFor(name)}`} value={draft} placeholder={`Tambah ${labelFor(name).toLowerCase()}`} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"){e.preventDefault();add();}}}/><button type="button" onClick={add}>Tambah</button></div></div>}
+
+function ValueEditor({name,value,onChange,depth=0}:{name:string;value:JsonValue;onChange:(v:JsonValue)=>void;depth?:number}){
+  if(Array.isArray(value)&&value.every(item=>typeof item==="string")&&tagFields.has(name))return <TagList name={name} value={value as string[]} onChange={onChange}/>;
+  if(Array.isArray(value))return <div className="admin-list">{value.map((item,index)=><ArrayItem key={index} index={index} item={item} name={name} depth={depth} count={value.length} onChange={next=>onChange(value.map((entry,i)=>i===index?next:entry))} onMove={offset=>onChange(moveItem(value,index,offset))} onRemove={()=>onChange(value.filter((_,i)=>i!==index))}/>)}<button className="admin-add" type="button" onClick={()=>onChange([...value,emptyLike(value[0]??"")])}><Plus size={16}/> Tambah {labelFor(name).toLowerCase()}</button></div>;
+  if(value&&typeof value==="object")return <div className="admin-field-grid">{Object.entries(value).map(([key,child])=><ValueEditor key={key} name={key} value={child} onChange={next=>onChange({...value,[key]:next})} depth={depth+1}/>)}</div>;
+  if(typeof value==="boolean")return <label className="admin-checkbox"><input type="checkbox" checked={value} onChange={e=>onChange(e.target.checked)}/>{labelFor(name)}</label>;
+  const text=value==null?"":String(value),type=fieldType(name,text);return <label className={type==="textarea"?"admin-field admin-field-wide":"admin-field"}><span>{labelFor(name)}</span>{type==="textarea"?<textarea value={text} onChange={e=>onChange(e.target.value)} rows={Math.min(6,Math.max(3,Math.ceil(text.length/100)))}/>:<input type={type} value={text} onChange={e=>onChange(typeof value==="number"?Number(e.target.value):e.target.value||(value===null?null:""))}/>}</label>;
 }
+function ArrayItem({index,item,name,onChange,onMove,onRemove,depth,count}:{index:number;item:JsonValue;name:string;onChange:(v:JsonValue)=>void;onMove:(n:number)=>void;onRemove:()=>void;depth:number;count:number}){const title=item&&typeof item==="object"&&!Array.isArray(item)?String(item.title??item.label??item.category??item.period??`${labelFor(name)} ${index+1}`):String(item||`${labelFor(name)} ${index+1}`);return <details className="admin-list-item" open={depth>0||index===0}><summary><span>{title}</span><span className="admin-item-actions" onClick={e=>e.preventDefault()}><button type="button" aria-label={`Naikkan ${title}`} onClick={()=>onMove(-1)} disabled={!index}><ChevronUp size={15}/></button><button type="button" aria-label={`Turunkan ${title}`} onClick={()=>onMove(1)} disabled={index===count-1}><ChevronDown size={15}/></button><button type="button" className="is-danger" aria-label={`Hapus ${title}`} onClick={onRemove}><Trash2 size={15}/></button></span></summary><div className="admin-list-content"><ValueEditor name={name} value={item} onChange={onChange} depth={depth+1}/></div></details>}
 
-function emptyLike(value: JsonValue): JsonValue {
-  if (Array.isArray(value)) return [];
-  if (value && typeof value === "object") {
-    return Object.fromEntries(Object.entries(value).map(([key, child]) => [key, emptyLike(child)]));
-  }
-  if (typeof value === "boolean") return false;
-  if (typeof value === "number") return 0;
-  return "";
-}
+function InlineText({value,onSave,onCancel,placeholder="Nama"}:{value:string;onSave:(v:string)=>void;onCancel:()=>void;placeholder?:string}){const [draft,setDraft]=useState(value);const error=!draft.trim();return <div className="admin-inline-edit"><input autoFocus value={draft} placeholder={placeholder} aria-invalid={error} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!error)onSave(draft.trim());if(e.key==="Escape")onCancel();}}/><button type="button" aria-label="Simpan" disabled={error} onClick={()=>onSave(draft.trim())}><Check size={15}/></button><button type="button" aria-label="Batal" onClick={onCancel}><X size={15}/></button></div>}
+function SkillsEditor({groups,onChange}:{groups:JsonValue[];onChange:(v:JsonValue[])=>void}){const [edit,setEdit]=useState<string|null>(null);const [adding,setAdding]=useState<number|null>(null);const [remove,setRemove]=useState<number|null>(null);const update=(index:number,next:ObjectValue)=>onChange(groups.map((g,i)=>i===index?next:g));return <div className="admin-compact-sections">{groups.map((raw,gi)=>{const group=raw as ObjectValue,category=String(group.category??"Kategori"),items=Array.isArray(group.items)?group.items.map(String):[];return <section className="admin-compact-section" key={`${category}-${gi}`}><header>{edit===`c${gi}`?<InlineText value={category} onSave={value=>{update(gi,{...group,category:value});setEdit(null)}} onCancel={()=>setEdit(null)}/>:<><div><h3>{category}</h3><span>{items.length} keahlian</span></div><div className="admin-row-actions"><button type="button" onClick={()=>setEdit(`c${gi}`)}><Pencil size={14}/> Ubah</button><button type="button" onClick={()=>onChange(moveItem(groups,gi,-1))} disabled={!gi} aria-label={`Naikkan ${category}`}><ChevronUp size={15}/></button><button type="button" onClick={()=>onChange(moveItem(groups,gi,1))} disabled={gi===groups.length-1} aria-label={`Turunkan ${category}`}><ChevronDown size={15}/></button><button type="button" className="is-danger" onClick={()=>setRemove(gi)}><Trash2 size={14}/></button></div></>}</header><div className="admin-compact-rows">{items.map((item,ii)=><div className="admin-compact-row" key={`${item}-${ii}`}>{edit===`${gi}-${ii}`?<InlineText value={item} onSave={value=>{if(!items.some((v,i)=>i!==ii&&v.toLowerCase()===value.toLowerCase()))update(gi,{...group,items:items.map((v,i)=>i===ii?value:v)});setEdit(null)}} onCancel={()=>setEdit(null)}/>:<><span>{item}</span><div className="admin-row-actions"><button type="button" onClick={()=>setEdit(`${gi}-${ii}`)}><Pencil size={14}/> Edit</button><button type="button" onClick={()=>update(gi,{...group,items:moveItem(items,ii,-1)})} disabled={!ii}><ChevronUp size={15}/></button><button type="button" onClick={()=>update(gi,{...group,items:moveItem(items,ii,1)})} disabled={ii===items.length-1}><ChevronDown size={15}/></button><button type="button" className="is-danger" onClick={()=>update(gi,{...group,items:items.filter((_,i)=>i!==ii)})}><Trash2 size={14}/> Hapus</button></div></>}</div>)}{adding===gi?<InlineText value="" placeholder="Nama keahlian" onSave={value=>{if(!items.some(v=>v.toLowerCase()===value.toLowerCase()))update(gi,{...group,items:[...items,value]});setAdding(null)}} onCancel={()=>setAdding(null)}/>:<button className="admin-add" type="button" onClick={()=>setAdding(gi)}><Plus size={15}/> Tambah keahlian</button>}</div></section>})}<button className="admin-add" type="button" onClick={()=>{onChange([...groups,{category:"Kategori baru",items:[]}]);setEdit(`c${groups.length}`)}}><Plus size={15}/> Tambah kategori</button>{remove!==null?<ConfirmDialog title="Hapus kategori?" onCancel={()=>setRemove(null)} onConfirm={()=>{onChange(groups.filter((_,i)=>i!==remove));setRemove(null)}}>Semua keahlian dalam kategori ini ikut dihapus setelah perubahan disimpan.</ConfirmDialog>:null}</div>}
 
-function fieldType(key: string, value: string) {
-  if (key === "email") return "email";
-  if (/url|href/i.test(key)) return "url";
-  return value.length > 100 || ["description", "about", "summary", "context", "objective", "body", "reflection", "outcome", "caption"].includes(key)
-    ? "textarea"
-    : "text";
-}
+function CompactCollection({items,onChange,kind}:{items:JsonValue[];onChange:(v:JsonValue[])=>void;kind:"social"|"timeline"}){const [selected,setSelected]=useState<number|null>(null);const [remove,setRemove]=useState<number|null>(null);const template:ObjectValue=kind==="social"?{label:"",href:""}:{period:"",title:"",description:"",type:""};const add=()=>{onChange([...items,template]);setSelected(items.length)};return <div className="admin-compact-sections"><div className="admin-compact-rows">{items.map((raw,index)=>{const item=raw as ObjectValue;return <div className="admin-collection-row" key={`${String(item.label??item.title)}-${index}`}>{selected===index?<div className="admin-field-grid"><ValueEditor name={kind} value={item} onChange={next=>onChange(items.map((v,i)=>i===index?next:v))}/><div className="admin-inline-done"><button type="button" className="button button-secondary" onClick={()=>setSelected(null)}>Selesai</button></div></div>:<><div><strong>{String((item.label??item.title)||"Item baru")}</strong><span>{String(item.href??item.period??"")}</span>{kind==="timeline"?<small>{String(item.type??"")} · {String(item.description??"")}</small>:null}</div><div className="admin-row-actions"><button type="button" onClick={()=>setSelected(index)}><Pencil size={14}/> Edit</button><button type="button" onClick={()=>onChange(moveItem(items,index,-1))} disabled={!index}><ChevronUp size={15}/></button><button type="button" onClick={()=>onChange(moveItem(items,index,1))} disabled={index===items.length-1}><ChevronDown size={15}/></button><button type="button" className="is-danger" onClick={()=>setRemove(index)}><Trash2 size={14}/></button></div></>}</div>})}</div><button className="admin-add" type="button" onClick={add}><Plus size={15}/> Tambah {kind==="social"?"tautan":"entri"}</button>{remove!==null?<ConfirmDialog title="Hapus item?" onCancel={()=>setRemove(null)} onConfirm={()=>{onChange(items.filter((_,i)=>i!==remove));setRemove(null)}}>Item dihapus setelah perubahan disimpan.</ConfirmDialog>:null}</div>}
 
-function ValueEditor({ name, value, onChange, depth = 0 }: { name: string; value: JsonValue; onChange: (value: JsonValue) => void; depth?: number }) {
-  if (Array.isArray(value)) {
-    return (
-      <div className="admin-list">
-        {value.map((item, index) => (
-          <ArrayItem
-            key={index}
-            index={index}
-            item={item}
-            name={name}
-            onChange={(next) => onChange(value.map((entry, itemIndex) => itemIndex === index ? next : entry))}
-            onMove={(offset) => {
-              const target = index + offset;
-              if (target < 0 || target >= value.length) return;
-              const next = [...value];
-              [next[index], next[target]] = [next[target], next[index]];
-              onChange(next);
-            }}
-            onRemove={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))}
-            depth={depth}
-          />
-        ))}
-        <button className="admin-add" type="button" onClick={() => onChange([...value, emptyLike(value[0] ?? "")])}>
-          <Plus size={16} aria-hidden="true" /> Tambah {labelFor(name).toLowerCase()}
-        </button>
-      </div>
-    );
-  }
+function ProfileEditor({value,onChange}:{value:ObjectValue;onChange:(v:JsonValue)=>void}){return <div className="admin-profile-groups">{profileGroups.map(([title,keys])=><section className="admin-editor-section" key={title}><div><h3>{title}</h3></div><div className="admin-field-grid">{keys.filter(key=>key in value).map(key=><ValueEditor key={key} name={key} value={value[key]} onChange={next=>onChange({...value,[key]:next})}/>)}</div></section>)}</div>}
 
-  if (value && typeof value === "object") {
-    return (
-      <div className="admin-field-grid">
-        {Object.entries(value).map(([key, child]) => (
-          <ValueEditor key={key} name={key} value={child} onChange={(next) => onChange({ ...value, [key]: next })} depth={depth + 1} />
-        ))}
-      </div>
-    );
-  }
-
-  if (typeof value === "boolean") {
-    return <label className="admin-checkbox"><input type="checkbox" checked={value} onChange={(event) => onChange(event.target.checked)} />{labelFor(name)}</label>;
-  }
-
-  const text = value == null ? "" : String(value);
-  const type = fieldType(name, text);
-  return (
-    <label className={type === "textarea" ? "admin-field admin-field-wide" : "admin-field"}>
-      <span>{labelFor(name)}</span>
-      {type === "textarea"
-        ? <textarea value={text} onChange={(event) => onChange(event.target.value)} rows={Math.min(8, Math.max(3, Math.ceil(text.length / 90)))} />
-        : <input type={type} value={text} onChange={(event) => onChange(typeof value === "number" ? Number(event.target.value) : event.target.value || (value === null ? null : ""))} />}
-    </label>
-  );
-}
-
-function ArrayItem({ index, item, name, onChange, onMove, onRemove, depth }: {
-  index: number;
-  item: JsonValue;
-  name: string;
-  onChange: (value: JsonValue) => void;
-  onMove: (offset: number) => void;
-  onRemove: () => void;
-  depth: number;
-}) {
-  const title = item && typeof item === "object" && !Array.isArray(item)
-    ? String(item.title ?? item.label ?? item.category ?? item.period ?? item.id ?? `${labelFor(name)} ${index + 1}`)
-    : `${labelFor(name)} ${index + 1}`;
-
-  return (
-    <details className="admin-list-item" open={depth > 0 || index === 0}>
-      <summary>
-        <span>{title}</span>
-        <span className="admin-item-actions" onClick={(event) => event.preventDefault()}>
-          <button type="button" aria-label="Naikkan" onClick={() => onMove(-1)} disabled={index === 0}><ChevronUp size={15} /></button>
-          <button type="button" aria-label="Turunkan" onClick={() => onMove(1)}><ChevronDown size={15} /></button>
-          <button type="button" aria-label="Hapus" onClick={onRemove}><Trash2 size={15} /></button>
-        </span>
-      </summary>
-      <div className="admin-list-content"><ValueEditor name={name} value={item} onChange={onChange} depth={depth + 1} /></div>
-    </details>
-  );
-}
-
-type ProjectValue = { title?: JsonValue; summary?: JsonValue; status?: JsonValue; role?: JsonValue; preview?: JsonValue; year?: JsonValue; [key: string]: JsonValue | undefined };
-
-function MiniProjectEditor({ projects, onChange }: { projects: JsonValue[]; onChange: (value: JsonValue[]) => void }) {
-  const [selected, setSelected] = useState<number | null>(null);
-
-  if (selected === null) {
-    return (
-      <div className="admin-project-browser">
-        <div className="admin-project-toolbar"><p>Pilih mini project untuk membuka detail dan mengeditnya.</p><button className="admin-add" type="button" onClick={() => { onChange([...projects, emptyLike(projects[0] ?? {})]); setSelected(projects.length); }}><Plus size={16} /> Tambah mini project</button></div>
-        <div className="admin-project-grid admin-mini-project-grid">
-          {projects.map((project, index) => {
-            const item = project as ProjectValue;
-            const imageUrl = String(item.imageUrl ?? "");
-            const tags = Array.isArray(item.tags) ? item.tags.map(String) : [];
-            return (
-              <button className="admin-project-card admin-mini-project-card" type="button" key={index} onClick={() => setSelected(index)}>
-                <span className="admin-mini-project-image" style={imageUrl ? { backgroundImage: `url(${JSON.stringify(imageUrl).slice(1, -1)})` } : undefined}>{imageUrl ? null : "Belum ada gambar"}</span>
-                <span className="admin-project-card-body"><strong>{String(item.title ?? `Mini project ${index + 1}`)}</strong><span>{String(item.description ?? "Belum ada deskripsi.")}</span>{tags.length ? <span className="admin-mini-tags">{tags.map((tag) => <i key={tag}>{tag}</i>)}</span> : null}<b>Edit detail →</b></span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  const project = projects[selected];
-  if (!project) return null;
-  return (
-    <div className="admin-project-detail">
-      <div className="admin-project-detail-head"><button type="button" className="admin-back" onClick={() => setSelected(null)}><ArrowLeft size={17} /> Kembali ke daftar mini project</button><button type="button" className="admin-delete-project" onClick={() => { onChange(projects.filter((_, index) => index !== selected)); setSelected(null); }}><Trash2 size={16} /> Hapus mini project</button></div>
-      <ValueEditor name="miniProject" value={project} onChange={(next) => onChange(projects.map((item, index) => index === selected ? next : item))} />
-    </div>
-  );
-}
-
-function ProjectEditor({ projects, onChange }: { projects: JsonValue[]; onChange: (value: JsonValue[]) => void }) {
-  const [selected, setSelected] = useState<number | null>(null);
-
-  if (selected === null) {
-    return (
-      <div className="admin-project-browser">
-        <div className="admin-project-toolbar"><p>Pilih proyek untuk membuka detail dan mengeditnya.</p><button className="admin-add" type="button" onClick={() => { onChange([...projects, emptyLike(projects[0] ?? {})]); setSelected(projects.length); }}><Plus size={16} /> Tambah proyek</button></div>
-        <div className="admin-project-grid">
-          {projects.map((project, index) => {
-            const item = project as ProjectValue;
-            const preview = ["marketplace", "database", "focus"].includes(String(item.preview)) ? item.preview as "marketplace" | "database" | "focus" : "marketplace";
-            return (
-              <button className="admin-project-card" type="button" key={index} onClick={() => setSelected(index)}>
-                <ProjectVisual type={preview} compact />
-                <span className="admin-project-card-body"><small>{String(item.status ?? "Proyek")}</small><strong>{String(item.title ?? `Proyek ${index + 1}`)}</strong><span>{String(item.summary ?? "Belum ada ringkasan.")}</span><b>Edit detail →</b></span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-    );
-  }
-
-  const project = projects[selected];
-  if (!project) return null;
-  return (
-    <div className="admin-project-detail">
-      <div className="admin-project-detail-head"><button type="button" className="admin-back" onClick={() => setSelected(null)}><ArrowLeft size={17} /> Kembali ke daftar proyek</button><button type="button" className="admin-delete-project" onClick={() => { onChange(projects.filter((_, index) => index !== selected)); setSelected(null); }}><Trash2 size={16} /> Hapus proyek</button></div>
-      <ValueEditor name="project" value={project} onChange={(next) => onChange(projects.map((item, index) => index === selected ? next : item))} />
-    </div>
-  );
-}
-
-export function ContentEditor({ contentKey, initialValue, action }: Props) {
-  const [value, setValue] = useState(initialValue);
-  const [dirty, setDirty] = useState(false);
-  const update = (next: JsonValue) => { setValue(next); setDirty(true); };
-
-  return (
-    <form action={action} className="admin-editor" onChange={() => setDirty(true)}>
-      <input type="hidden" name="key" value={contentKey} />
-      <input type="hidden" name="value" value={JSON.stringify(value)} />
-      <div className="admin-editor-heading">
-        <div><p className="eyebrow">Editor</p><h2>{labelFor(contentKey)}</h2></div>
-        <button className="button button-primary" type="submit"><Save size={16} /> {dirty ? "Simpan perubahan" : "Simpan"}</button>
-      </div>
-      {contentKey === "projects" && Array.isArray(value)
-        ? <ProjectEditor projects={value} onChange={update} />
-        : contentKey === "miniProjects" && Array.isArray(value)
-          ? <MiniProjectEditor projects={value} onChange={update} />
-          : <ValueEditor name={contentKey} value={value} onChange={update} />}
-      <div className="admin-save-bar"><span>{dirty ? "Ada perubahan yang belum disimpan." : "Semua perubahan sudah tersimpan."}</span><button className="button button-primary" type="submit"><Save size={16} /> Simpan</button></div>
-    </form>
-  );
-}
+type ProjectValue=ObjectValue&{title?:JsonValue;summary?:JsonValue;status?:JsonValue;preview?:JsonValue;imageUrl?:JsonValue;description?:JsonValue;stack?:JsonValue;tags?:JsonValue};
+function ProjectManager({projects,onChange,mini=false,create=false}:{projects:JsonValue[];onChange:(v:JsonValue[])=>void;mini?:boolean;create?:boolean}){const [selected,setSelected]=useState<number|null>(create?projects.length:null),[query,setQuery]=useState(""),[view,setView]=useState<"grid"|"list">("grid"),[remove,setRemove]=useState<number|null>(null);useEffect(()=>{if(create)onChange([...projects,emptyLike(projects[0]??{})]);},[]);// eslint-disable-line react-hooks/exhaustive-deps
+const filtered=projects.map((project,index)=>({project:project as ProjectValue,index})).filter(({project})=>`${project.title??""} ${project.summary??project.description??""}`.toLowerCase().includes(query.toLowerCase()));if(selected!==null&&projects[selected])return <div className="admin-project-detail"><div className="admin-project-detail-head"><button type="button" className="admin-back" onClick={()=>setSelected(null)}><ArrowLeft size={17}/> Kembali ke daftar</button><button type="button" className="admin-delete-project" onClick={()=>setRemove(selected)}><Trash2 size={16}/> Hapus</button></div><section className="admin-editor-section"><div><h3>{String((projects[selected] as ProjectValue).title||(mini?"Proyek mini baru":"Proyek baru"))}</h3></div><ValueEditor name={mini?"miniProject":"project"} value={projects[selected]} onChange={next=>onChange(projects.map((item,i)=>i===selected?next:item))}/></section>{remove!==null?<ConfirmDialog title="Hapus proyek?" onCancel={()=>setRemove(null)} onConfirm={()=>{onChange(projects.filter((_,i)=>i!==remove));setSelected(null);setRemove(null)}}>Proyek dihapus setelah perubahan disimpan.</ConfirmDialog>:null}</div>;
+const add=()=>{onChange([...projects,emptyLike(projects[0]??{})]);setSelected(projects.length)};return <div className="admin-project-browser"><div className="admin-data-toolbar"><label className="admin-search"><Search size={16}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Cari proyek..."/></label><div className="admin-view-toggle"><button type="button" onClick={()=>setView("grid")}><Grid2X2 size={16}/></button><button type="button" onClick={()=>setView("list")}><List size={16}/></button></div><button className="button button-primary" type="button" onClick={add}><Plus size={16}/> Tambah</button></div><div className={`admin-project-grid is-${view}`}>{filtered.map(({project,index})=><article className="admin-project-card" key={`${String(project.title)}-${index}`}><button type="button" onClick={()=>setSelected(index)}>{mini?<span className="admin-mini-project-image" style={project.imageUrl?{backgroundImage:`url(${String(project.imageUrl)})`}:undefined}/>:<ProjectVisual type={["marketplace","database","focus"].includes(String(project.preview))?project.preview as "marketplace"|"database"|"focus":"marketplace"} compact/>}<span className="admin-project-card-body"><strong>{String(project.title||"Tanpa judul")}</strong><span>{String(project.summary??project.description??"Belum ada deskripsi.")}</span><b>Edit detail →</b></span></button><div className="admin-row-order"><button type="button" onClick={()=>onChange(moveItem(projects,index,-1))} disabled={!index}><ChevronUp size={14}/></button><button type="button" onClick={()=>onChange(moveItem(projects,index,1))} disabled={index===projects.length-1}><ChevronDown size={14}/></button></div></article>)}</div></div>}
+function SeoEditor({value,onChange}:{value:ObjectValue;onChange:(v:JsonValue)=>void}){const title=String(value.title??""),description=String(value.description??""),url=String(value.url??"");return <div className="admin-seo-layout"><section className="admin-editor-section"><ValueEditor name="seo" value={value} onChange={onChange}/></section><aside><div className="admin-preview-card"><h3>Pratinjau pencarian</h3><div className="admin-google-preview"><span>{url||"https://example.com"}</span><strong>{title||"Judul website"}</strong><p>{description||"Deskripsi website"}</p></div></div><div className="admin-guidance"><h3>Panduan</h3><p><span>Judul</span><b>{title.length}/60</b></p><p><span>Deskripsi</span><b>{description.length}/160</b></p></div></aside></div>}
+function SubmitButton(){const{pending}=useFormStatus();return <button className="button button-primary" type="submit" disabled={pending}>{pending?<span className="admin-spinner"/>:<Save size={16}/>} {pending?"Menyimpan…":"Simpan perubahan"}</button>}
+export function ContentEditor({contentKey,initialValue,action,create}:Props){const[value,setValue]=useState(initialValue);const dirty=useMemo(()=>JSON.stringify(value)!==JSON.stringify(initialValue),[value,initialValue]);useEffect(()=>{const warn=(event:BeforeUnloadEvent)=>{if(dirty)event.preventDefault()};window.addEventListener("beforeunload",warn);return()=>window.removeEventListener("beforeunload",warn)},[dirty]);const update=(next:JsonValue)=>setValue(next);return <form action={action} className="admin-editor"><input type="hidden" name="key" value={contentKey}/><input type="hidden" name="value" value={JSON.stringify(value)}/><header className="admin-page-heading"><div><p className="admin-kicker">Content / {labelFor(contentKey)}</p><h1>{labelFor(contentKey)}</h1><p>{descriptions[contentKey]}</p></div></header>{contentKey==="skills"&&Array.isArray(value)?<SkillsEditor groups={value} onChange={update}/>:contentKey==="socialLinks"&&Array.isArray(value)?<CompactCollection items={value} onChange={update} kind="social"/>:contentKey==="timeline"&&Array.isArray(value)?<CompactCollection items={value} onChange={update} kind="timeline"/>:contentKey==="profile"&&value&&typeof value==="object"&&!Array.isArray(value)?<ProfileEditor value={value} onChange={update}/>:contentKey==="projects"&&Array.isArray(value)?<ProjectManager projects={value} onChange={update} create={create}/>:contentKey==="miniProjects"&&Array.isArray(value)?<ProjectManager projects={value} onChange={update} mini create={create}/>:contentKey==="seo"&&value&&typeof value==="object"&&!Array.isArray(value)?<SeoEditor value={value} onChange={update}/>:<section className="admin-editor-section"><ValueEditor name={contentKey} value={value} onChange={update}/></section>}{dirty?<div className="admin-save-bar" role="status"><span><i/> Ada perubahan yang belum disimpan.</span><div><button type="button" className="button button-secondary" onClick={()=>setValue(initialValue)}>Batalkan perubahan</button><SubmitButton/></div></div>:null}</form>}

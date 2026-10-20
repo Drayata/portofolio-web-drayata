@@ -19,7 +19,7 @@ export async function MiniProjects() {
         {miniProjects.map((project) => (
           <Reveal key={project.id}>
             <article className="mini-project-card">
-              <Image src={project.imageUrl} alt="" width={1200} height={675} className="mini-project-image" />
+              <Image src={project.imageUrl?.trim() || "/mini-project-placeholder.svg"} alt="" width={1200} height={675} className="mini-project-image" />
               <div className="mini-project-body">
                 <h3>{project.title}</h3>
                 <p>{project.description}</p>
