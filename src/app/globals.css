@@ -52,7 +52,10 @@ body::before {
       circle at 85% 42%,
       rgba(139, 92, 246, 0.055),
       transparent 25%
-    );
+    ),
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: auto, auto, 56px 56px, 56px 56px;
 }
 a {
   color: inherit;

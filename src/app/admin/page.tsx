@@ -28,7 +28,7 @@ const sectionLabels: Record<ContentKey, string> = {
   projects: "Proyek",
   miniProjects: "Proyek mini",
   skills: "Keahlian",
-  timeline: "Perjalan",
+  timeline: "Perjalanan",
 };
 
 const sectionIcons = {
