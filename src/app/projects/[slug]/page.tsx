@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ArrowLeft, ArrowRight, ArrowUpRight, GitBranch } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectVisual } from "@/components/projects/project-visual";
@@ -62,7 +63,7 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
               {project.sourceUrl ? <a href={project.sourceUrl} className="button button-secondary"><GitBranch size={17} aria-hidden="true" /> View source</a> : null}
             </div>
           </div>
-          <ProjectVisual type={project.preview} />
+          {project.imageUrl ? <div className="case-project-image"><Image src={project.imageUrl} alt="" fill sizes="(max-width: 900px) 100vw, 58vw" /></div> : <ProjectVisual type={project.preview} />}
           <dl className="case-facts">
             <div><dt>Role</dt><dd>{project.role}</dd></div>
             <div><dt>Status</dt><dd>{project.status}</dd></div>

@@ -730,6 +730,17 @@ button {
   min-height: 100%;
   border-right: 1px solid var(--border);
 }
+.project-uploaded-image,
+.case-project-image img {
+  object-fit: cover;
+}
+.case-project-image {
+  position: relative;
+  min-height: 500px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
 .project-number {
   position: absolute;
   z-index: 3;

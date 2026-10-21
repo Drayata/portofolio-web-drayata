@@ -20,6 +20,8 @@ export type Project = {
   status: string;
   accent: "cyan" | "violet" | "amber";
   preview: "marketplace" | "database" | "focus";
+  imageUrl?: string;
+  imageKey?: string;
   liveUrl: string | null;
   sourceUrl: string | null;
   context: string;
@@ -46,5 +48,6 @@ export type MiniProject = {
   title: string;
   description: string;
   imageUrl: string;
+  imageKey?: string;
   tags?: string[];
 };

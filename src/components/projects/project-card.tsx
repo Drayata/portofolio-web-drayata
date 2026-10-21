@@ -1,4 +1,5 @@
 import { ArrowUpRight, GitBranch } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import type { Project } from "@/types/portfolio";
 import { ProjectVisual } from "./project-visual";
@@ -7,7 +8,7 @@ export function ProjectCard({ project, featured = false, index }: { project: Pro
   return (
     <article className={`project-card accent-${project.accent} ${featured ? "project-featured" : ""}`}>
       <div className="project-card-visual">
-        <ProjectVisual type={project.preview} compact={!featured} />
+        {project.imageUrl ? <Image src={project.imageUrl} alt="" fill sizes={featured ? "(max-width: 900px) 100vw, 58vw" : "(max-width: 900px) 100vw, 50vw"} className="project-uploaded-image" /> : <ProjectVisual type={project.preview} compact={!featured} />}
         <div className="project-number" aria-hidden="true">0{index + 1}</div>
       </div>
       <div className="project-card-body">
