@@ -1,12 +1,13 @@
 import type {
   MiniProject,
+  Profile,
   Project,
   SocialLink,
   TimelineItem,
 } from "@/types/portfolio";
 
 // TODO: replace before launch — email, usernames, timezone, and canonical domain.
-export const profile = {
+export const profile: Profile = {
   name: "Indra Surya Adinata",
   monogram: "ISA",
   role: "Web Developer",
@@ -23,7 +24,9 @@ export const profile = {
     "I’m an Informatics Engineering student at Universitas Jenderal Soedirman who enjoys turning open-ended problems into clear, structured products. I learn best by building: mapping a user flow, shaping the interface, then working through the data and implementation details that make it dependable. My projects span modern web applications, relational database design, and an early-stage mobile productivity concept. I care about thoughtful UI, accessible interactions, and code that remains understandable as a product grows. I’m currently looking for an internship or junior web development opportunity where I can contribute, learn from a strong team, and keep improving through real product work.",
   education: "Informatics Engineering — Universitas Jenderal Soedirman",
   exploring: ["Full-stack development", "Product engineering", "Applied AI"],
-} as const;
+  imageUrl: "",
+  imageKey: "",
+};
 
 export const socialLinks: SocialLink[] = [
   { label: "GitHub", href: "https://github.com/drayata" },

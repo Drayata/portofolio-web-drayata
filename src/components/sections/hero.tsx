@@ -30,13 +30,21 @@ export async function Hero() {
           <i />
         </div>
         <div className="core-mark">
-          <Image
-            className="hero-image"
-            src="/images.jpeg"
-            alt=""
-            fill
-            sizes="(max-width: 768px) 32vw, 154px"
-          />
+          {profile.imageUrl ? (
+            <Image
+              className="hero-image"
+              src={profile.imageUrl}
+              alt=""
+              fill
+              sizes="(max-width: 768px) 32vw, 154px"
+              priority
+            />
+          ) : (
+            <>
+              <span>{profile.monogram}</span>
+              <small>WEB / 01</small>
+            </>
+          )}
         </div>
         <div className="node node-a" />
         <div className="node node-b" />

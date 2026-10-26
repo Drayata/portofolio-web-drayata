@@ -58,9 +58,15 @@ export function SiteHeader() {
   }, [open]);
 
   return (
-    <header className={`site-header${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}>
+    <header
+      className={`site-header${scrolled ? " is-scrolled" : ""}${open ? " is-open" : ""}`}
+    >
       <nav className="nav-island" aria-label="Primary navigation">
-        <Link href="/" className="wordmark" aria-label={`${profile.name}, home`}>
+        <Link
+          href="/"
+          className="wordmark"
+          aria-label={`${profile.name}, home`}
+        >
           <span>{profile.monogram}</span>
           <span className="wordmark-dot" aria-hidden="true" />
         </Link>
@@ -68,7 +74,14 @@ export function SiteHeader() {
           {navigation.map((item) => {
             const section = item.href.split("#")[1];
             return (
-              <Link key={item.href} href={item.href} className={activeSection === section ? "is-active" : undefined} aria-current={activeSection === section ? "location" : undefined}>
+              <Link
+                key={item.href}
+                href={item.href}
+                className={activeSection === section ? "is-active" : undefined}
+                aria-current={
+                  activeSection === section ? "location" : undefined
+                }
+              >
                 {item.label}
               </Link>
             );
@@ -90,10 +103,21 @@ export function SiteHeader() {
         </button>
       </nav>
       {open ? (
-        <div className="mobile-nav" id="mobile-navigation" onClick={() => setOpen(false)}>
-          <nav aria-label="Mobile navigation" onClick={(event) => event.stopPropagation()}>
+        <div
+          className="mobile-nav"
+          id="mobile-navigation"
+          onClick={() => setOpen(false)}
+        >
+          <nav
+            aria-label="Mobile navigation"
+            onClick={(event) => event.stopPropagation()}
+          >
             {navigation.map((item, index) => (
-              <Link key={item.href} href={item.href} onClick={() => setOpen(false)}>
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setOpen(false)}
+              >
                 <span className="nav-index">0{index + 1}</span>
                 {item.label}
               </Link>

@@ -51,3 +51,22 @@ export type MiniProject = {
   imageKey?: string;
   tags?: string[];
 };
+
+export type Profile = {
+  name: string;
+  monogram: string;
+  role: string;
+  supportingRole: string;
+  location: string;
+  timezone: string;
+  availability: string;
+  eyebrow: string;
+  headline: string;
+  description: string;
+  email: string;
+  about: string;
+  education: string;
+  exploring: readonly string[];
+  imageUrl?: string;
+  imageKey?: string;
+};
