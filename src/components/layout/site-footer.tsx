@@ -7,7 +7,7 @@ export function SiteFooter() {
       <div className="container footer-grid">
         <div>
           <p className="footer-name">{profile.name}</p>
-          <p className="muted">Designed and built with care.</p>
+          <p className="muted">Drayata · Portofolio Web Developer Indonesia. Designed and built with care.</p>
         </div>
         <nav aria-label="Footer navigation">
           {navigation.slice(0, 3).map((item) => (

@@ -13,10 +13,17 @@ export const metadata: Metadata = {
   metadataBase: new URL(seo.url),
   title: { default: seo.title, template: `%s — ${profile.name}` },
   description: seo.description,
+  keywords: [...seo.keywords],
+  authors: [{ name: profile.name, url: seo.url }],
+  creator: profile.name,
+  applicationName: `${profile.name} Portfolio`,
   alternates: { canonical: "/" },
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
+  verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
   openGraph: {
     type: "website",
     locale: "en_US",
+    alternateLocale: ["id_ID"],
     url: "/",
     siteName: profile.name,
     title: seo.title,
@@ -31,19 +38,39 @@ export const metadata: Metadata = {
 export const viewport: Viewport = { colorScheme: "dark", themeColor: "#06070A", width: "device-width", initialScale: 1 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  const sameAs = socialLinks.flatMap((link) => (link.href ? [link.href] : []));
+  const sameAs = socialLinks.flatMap((link) => (link.href && URL.canParse(link.href) && !link.href.includes("USERNAME") ? [link.href] : []));
   const structuredData = [
     {
       "@context": "https://schema.org",
       "@type": "Person",
+      "@id": `${seo.url}/#person`,
       name: profile.name,
+      alternateName: ["Drayata", "Indra Surya"],
       url: seo.url,
+      email: `mailto:${profile.email}`,
       jobTitle: profile.role,
+      description: seo.description,
+      knowsAbout: ["Web Development", "Frontend Development", "Next.js", "React", "TypeScript"],
       address: { "@type": "PostalAddress", addressCountry: "ID" },
       alumniOf: { "@type": "CollegeOrUniversity", name: "Universitas Jenderal Soedirman" },
       sameAs,
     },
-    { "@context": "https://schema.org", "@type": "WebSite", name: `${profile.name} — Portfolio`, url: seo.url, inLanguage: "en" },
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      name: `${profile.name} — Portfolio`,
+      alternateName: ["Drayata", "Drayata Portfolio", "Portofolio Indra Surya Adinata"],
+      url: seo.url,
+      inLanguage: "en",
+      author: { "@id": `${seo.url}/#person` },
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "ProfilePage",
+      url: seo.url,
+      name: seo.title,
+      mainEntity: { "@id": `${seo.url}/#person` },
+    },
   ];
 
   return (

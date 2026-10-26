@@ -5,7 +5,7 @@ import { profile, projects, skills, socialLinks } from "@/data/portfolio";
 
 export const metadata: Metadata = {
   title: "Résumé",
-  description: `Résumé for ${profile.name}, ${profile.role}.`,
+  description: `Résumé / CV ${profile.name} (Drayata), ${profile.role} from Indonesia — education, experience, skills, and projects.`,
   alternates: { canonical: "/resume" },
 };
 

@@ -45,11 +45,24 @@ export const navigation = [
 ] as const;
 
 export const seo = {
-  // TODO: replace before launch with the final production domain.
-  url: "https://example.com",
-  title: "Indra Surya Adinata — Web Developer",
+  url: "https://www.drayata.my.id",
+  title: "Indra Surya Adinata (Drayata) — Web Developer Portfolio",
   description:
-    "Portfolio of Indra Surya Adinata, a web developer and Informatics Engineering student in Indonesia.",
+    "Portofolio Indra Surya Adinata (Drayata), Web Developer and Informatics Engineering student from Indonesia. Explore projects, case studies, and résumé.",
+  keywords: [
+    "Indra Surya Adinata",
+    "Indra Surya",
+    "Drayata",
+    "Portofolio",
+    "Portfolio",
+    "Web Developer",
+    "Web Developer Indonesia",
+    "Frontend Developer",
+    "Full Stack Developer",
+    "Portofolio Web Developer",
+    "Next.js Developer",
+    "Universitas Jenderal Soedirman",
+  ],
 } as const;
 
 export const projects: Project[] = [

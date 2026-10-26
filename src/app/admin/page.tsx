@@ -1,4 +1,5 @@
 import { ArrowRight, BriefcaseBusiness, ExternalLink, FolderKanban, ListChecks, Plus, UserRound, Wrench } from "lucide-react";
+import type { Metadata } from "next";
 import "./admin.css";
 import { isAdmin } from "@/lib/auth";
 import { defaultContent, getAllContent, type ContentKey } from "@/lib/content";
@@ -7,6 +8,7 @@ import { ContentEditor, type JsonValue } from "./content-editor";
 import { login, logout, updateContent } from "./actions";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Admin", robots: { index: false, follow: false } };
 
 type Props = { searchParams: Promise<{ create?: string; error?: string; saved?: string; section?: string }> };
 

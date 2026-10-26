@@ -34,7 +34,7 @@ export async function Hero() {
             <Image
               className="hero-image"
               src={profile.imageUrl}
-              alt=""
+              alt={`${profile.name} (Drayata), ${profile.role}`}
               fill
               sizes="(max-width: 768px) 32vw, 154px"
               priority
