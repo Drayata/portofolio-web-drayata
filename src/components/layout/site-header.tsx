@@ -67,7 +67,7 @@ export function SiteHeader() {
           className="wordmark"
           aria-label={`${profile.name}, home`}
         >
-          <span>{profile.monogram}</span>
+          <span>Drayata</span>
           <span className="wordmark-dot" aria-hidden="true" />
         </Link>
         <div className="desktop-nav">
@@ -87,17 +87,20 @@ export function SiteHeader() {
             );
           })}
         </div>
-        <button
-          className="menu-button"
-          type="button"
-          aria-expanded={open}
-          aria-controls="mobile-navigation"
-          aria-label={open ? "Close navigation" : "Open navigation"}
-          onClick={() => setOpen((value) => !value)}
-          ref={menuButton}
-        >
-          {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
-        </button>
+        <div className="nav-actions">
+          <span className="nav-dev">Dev</span>
+          <button
+            className="menu-button"
+            type="button"
+            aria-expanded={open}
+            aria-controls="mobile-navigation"
+            aria-label={open ? "Close navigation" : "Open navigation"}
+            onClick={() => setOpen((value) => !value)}
+            ref={menuButton}
+          >
+            {open ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          </button>
+        </div>
       </nav>
       {open ? (
         <div
