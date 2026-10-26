@@ -1,6 +1,6 @@
 "use client";
 
-import { FileText, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { navigation, profile } from "@/data/portfolio";
@@ -87,9 +87,6 @@ export function SiteHeader() {
             );
           })}
         </div>
-        <Link href="/resume" className="resume-link desktop-resume">
-          <FileText size={14} aria-hidden="true" /> Résumé
-        </Link>
         <button
           className="menu-button"
           type="button"
@@ -122,10 +119,6 @@ export function SiteHeader() {
                 {item.label}
               </Link>
             ))}
-            <Link href="/resume" onClick={() => setOpen(false)}>
-              <span className="nav-index">0{navigation.length + 1}</span>
-              Résumé
-            </Link>
           </nav>
         </div>
       ) : null}
