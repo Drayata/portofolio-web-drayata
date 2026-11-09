@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   keywords: [...seo.keywords],
   authors: [{ name: profile.name, url: seo.url }],
   creator: profile.name,
-  applicationName: `${profile.name} Portfolio`,
+  applicationName: seo.siteName,
   alternates: { canonical: "/" },
   robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 } },
   verification: { google: process.env.GOOGLE_SITE_VERIFICATION },
@@ -25,13 +25,20 @@ export const metadata: Metadata = {
     locale: "en_US",
     alternateLocale: ["id_ID"],
     url: "/",
-    siteName: profile.name,
+    siteName: seo.siteName,
     title: seo.title,
     description: seo.description,
     images: [{ url: "/opengraph-image", width: 1200, height: 630, alt: `${profile.name} — ${profile.role}` }],
   },
   twitter: { card: "summary_large_image", title: seo.title, description: seo.description, images: ["/opengraph-image"] },
-  icons: { icon: "/icon.svg" },
+  icons: {
+    icon: [
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+  },
   manifest: "/manifest.webmanifest",
 };
 
@@ -39,39 +46,21 @@ export const viewport: Viewport = { colorScheme: "dark", themeColor: "#06070A", 
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   const sameAs = socialLinks.flatMap((link) => (link.href && URL.canParse(link.href) && !link.href.includes("USERNAME") ? [link.href] : []));
-  const structuredData = [
-    {
-      "@context": "https://schema.org",
-      "@type": "Person",
-      "@id": `${seo.url}/#person`,
-      name: profile.name,
-      alternateName: ["Drayata", "Indra Surya"],
-      url: seo.url,
-      email: `mailto:${profile.email}`,
-      jobTitle: profile.role,
-      description: seo.description,
-      knowsAbout: ["Web Development", "Frontend Development", "Next.js", "React", "TypeScript"],
-      address: { "@type": "PostalAddress", addressCountry: "ID" },
-      alumniOf: { "@type": "CollegeOrUniversity", name: "Universitas Jenderal Soedirman" },
-      sameAs,
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      name: `${profile.name} — Portfolio`,
-      alternateName: ["Drayata", "Drayata Portfolio", "Portofolio Indra Surya Adinata"],
-      url: seo.url,
-      inLanguage: "en",
-      author: { "@id": `${seo.url}/#person` },
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "ProfilePage",
-      url: seo.url,
-      name: seo.title,
-      mainEntity: { "@id": `${seo.url}/#person` },
-    },
-  ];
+  const personData = {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "@id": `${seo.url}/#person`,
+    name: profile.name,
+    alternateName: [seo.siteName, "Indra Surya"],
+    url: `${seo.url}/`,
+    email: `mailto:${profile.email}`,
+    jobTitle: profile.role,
+    description: seo.description,
+    knowsAbout: ["Web Development", "Frontend Development", "Next.js", "React", "TypeScript"],
+    address: { "@type": "PostalAddress", addressCountry: "ID" },
+    alumniOf: { "@type": "CollegeOrUniversity", name: "Universitas Jenderal Soedirman" },
+    sameAs,
+  };
 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
@@ -81,7 +70,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SiteHeader />
         {children}
         <SiteFooter />
-        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData).replace(/</g, "\\u003c") }} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(personData).replace(/</g, "\\u003c") }} />
       </body>
     </html>
   );

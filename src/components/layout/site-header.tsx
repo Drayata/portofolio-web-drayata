@@ -3,7 +3,7 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import { navigation, profile } from "@/data/portfolio";
+import { navigation, seo } from "@/data/portfolio";
 
 export function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -65,7 +65,7 @@ export function SiteHeader() {
         <Link
           href="/"
           className="wordmark"
-          aria-label={`${profile.name}, home`}
+          aria-label={`${seo.siteName}, home`}
         >
           <span>Drayata</span>
           <span className="wordmark-dot" aria-hidden="true" />

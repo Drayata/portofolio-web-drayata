@@ -92,3 +92,27 @@ test("case study and resume visual surfaces", async ({ page }, testInfo) => {
   await expect(page.getByRole("button", { name: "Print / Save as PDF" })).toBeHidden();
   await page.pdf({ path: testInfo.outputPath("resume-a4.pdf"), format: "A4", printBackground: true });
 });
+
+test("homepage exposes consistent site name and crawlable raster favicons", async ({ page, request }) => {
+  await page.goto("/");
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "Drayata");
+  await expect(page.locator('meta[name="application-name"]')).toHaveAttribute("content", "Drayata");
+  const iconHrefs = await page.locator('head link[rel="icon"], head link[rel="apple-touch-icon"]').evaluateAll((links) =>
+    links.map((link) => link.getAttribute("href")),
+  );
+  expect(iconHrefs).toEqual(expect.arrayContaining(["/icon-192.png", "/favicon.ico", "/apple-touch-icon.png"]));
+  for (const iconPath of ["/icon-192.png", "/favicon.ico", "/apple-touch-icon.png", "/icon.svg"]) {
+    expect((await request.get(iconPath)).status()).toBe(200);
+  }
+  const ldEntries = await page.locator('script[type="application/ld+json"]').evaluateAll((nodes) =>
+    nodes.flatMap((node) => {
+      const parsed = JSON.parse(node.textContent || "null");
+      return Array.isArray(parsed) ? parsed : [parsed];
+    }),
+  );
+  const website = ldEntries.find((entry) => entry?.["@type"] === "WebSite");
+  expect(website).toMatchObject({ name: "Drayata", url: "https://www.drayata.my.id/" });
+
+  await page.goto("/projects/ruang-usaha-kita");
+  await expect(page.locator('meta[property="og:site_name"]')).toHaveAttribute("content", "Drayata");
+});

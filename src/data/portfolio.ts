@@ -45,6 +45,7 @@ export const navigation = [
 ] as const;
 
 export const seo = {
+  siteName: "Drayata",
   url: "https://www.drayata.my.id",
   title: "Indra Surya Adinata (Drayata) — Web Developer Portfolio",
   description:

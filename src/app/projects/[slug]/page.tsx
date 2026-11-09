@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProjectVisual } from "@/components/projects/project-visual";
-import { projects as defaultProjects } from "@/data/portfolio";
+import { projects as defaultProjects, seo as defaultSeo } from "@/data/portfolio";
 import { getContent } from "@/lib/content";
 
 type ProjectPageProps = { params: Promise<{ slug: string }> };
@@ -23,7 +23,7 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
     title,
     description: project.summary,
     alternates: { canonical: `/projects/${project.slug}` },
-    openGraph: { title, description: project.summary, url: `/projects/${project.slug}`, images: ["/opengraph-image"] },
+    openGraph: { siteName: defaultSeo.siteName, title, description: project.summary, url: `/projects/${project.slug}`, images: ["/opengraph-image"] },
     twitter: { card: "summary_large_image", title, description: project.summary, images: ["/opengraph-image"] },
   };
 }
