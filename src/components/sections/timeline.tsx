@@ -6,7 +6,7 @@ export async function Timeline() {
   const timeline = await getContent("timeline");
   return (
     <section className="section container timeline-section" aria-labelledby="timeline-heading">
-      <Reveal><SectionHeading id="timeline-heading" eyebrow="04 / Learning path" title="Building depth through practice." /></Reveal>
+      <Reveal><SectionHeading id="timeline-heading" eyebrow="05 / Learning path" title="Building depth through practice." /></Reveal>
       <ol className="timeline">
         {timeline.map((item, index) => (
           <Reveal key={item.title} className="timeline-item">

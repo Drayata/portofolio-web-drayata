@@ -68,7 +68,6 @@ export function SiteHeader() {
           aria-label={`${seo.siteName}, home`}
         >
           <span>Drayata</span>
-          <span className="wordmark-dot" aria-hidden="true" />
         </Link>
         <div className="desktop-nav">
           {navigation.map((item) => {

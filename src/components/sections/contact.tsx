@@ -9,7 +9,7 @@ export async function Contact() {
     <section id="contact" className="section contact-section container" aria-labelledby="contact-heading">
       <Reveal>
         <div className="contact-panel">
-          <p className="eyebrow">05 / Start a conversation</p>
+          <p className="eyebrow">06 / Start a conversation</p>
           <h2 id="contact-heading">Have an opportunity or an interesting problem? <span>Let’s talk.</span></h2>
           <p>I’m open to internship and junior web development roles where careful frontend work and thoughtful engineering matter.</p>
           <div className="contact-actions">

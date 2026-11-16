@@ -195,14 +195,7 @@ button {
   font-weight: 750;
   letter-spacing: -0.04em;
 }
-.wordmark-dot {
-  width: 6px;
-  height: 6px;
-  margin-top: -12px;
-  border-radius: 50%;
-  background: var(--cyan);
-  box-shadow: 0 0 14px var(--cyan);
-}
+
 .desktop-nav {
   padding: 3px;
   display: flex;
@@ -243,10 +236,10 @@ button {
 }
 .nav-dev {
   font-family: var(--font-geist-mono), monospace;
-  font-size: 0.82rem;
+  font-size: 0.9rem;
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--muted);
+  color: var(--text);
   user-select: none;
 }
 .resume-link {

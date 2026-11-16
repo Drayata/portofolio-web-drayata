@@ -8,7 +8,7 @@ export async function About() {
   return (
     <section id="about" className="section about-section container" aria-labelledby="about-heading">
       <Reveal>
-        <SectionHeading id="about-heading" eyebrow="02 / About" title="Curiosity, made concrete." />
+        <SectionHeading id="about-heading" eyebrow="03 / About" title="Curiosity, made concrete." />
       </Reveal>
       <div className="about-grid">
         <Reveal className="about-copy"><p>{profile.about}</p></Reveal>
